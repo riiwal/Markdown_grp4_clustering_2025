@@ -111,7 +111,7 @@ h5 > .header-section-number {
 ```
 # Introduction
 
-Dans ce cours, nous allons explorer les différentes méthodes de la classification non supervisée. Cette approche est utilisée lorsque, a priori, la structure des groupes (ou classes) dans la population n'est pas connue. Contrairement à la classification supervisée, l'objectif n'est pas de prédire des étiquettes existantes, mais de mettre en évidence une structure latente dans les données.
+Dans ce cours, nous allons explorer  différentes méthodes de classification non supervisée. Cette approche est utilisée lorsque, a priori, la structure des groupes (ou classes) dans la population n'est pas connue. Contrairement à la classification supervisée, l'objectif n'est pas de prédire des étiquettes existantes, mais de mettre en évidence une structure latente dans les données.
 
 Cette structure peut prendre deux formes principales :
 
@@ -119,7 +119,7 @@ Partition stricte : Un découpage où chaque observation appartient exclusivemen
 
 Classification floue (ou probabiliste) : Où chaque observation se voit attribuer une probabilité d'appartenance à différentes classes (comme les modèles de lois de mélanges).
 
-Au cours de ce semestre, nous étudierons comment classifier une grande variété d'objets : des variables, des individus, des distributions, et même des données textuelles et fonctionnelles.
+Nous étudierons comment classifier une grande variété d'objets : des variables, des individus, des distributions, et même des données textuelles et fonctionnelles.
 
 ## Plan
 **1 - Classification de variable**\
@@ -136,8 +136,7 @@ Critères d'agrégation et d'arrêt : Déterminer les règles pour former ou fus
 C'est un problème très présent en biologie mais que l'on retrouve dans d'autre discipline. Pour résoudre ce problème une méthode de classification ascendente hiérarchique sera mise en place. 
 
 **3 - Loi de mélanges**\
-Cette partie introduit les concepts de lois de mélanges, en se concentrant sur les gaussiennes multivariées. Ces distributions sont un outil clé pour la classification probabiliste, car elles permettent de modéliser des populations hétérogènes. Comprendre ces concepts est essentiel, car plusieurs objets que nous chercherons à classer proviennent de telles lois.
-
+Cette partie introduit les concepts de lois de mélanges, en se concentrant sur les gaussiennes multivariées. Ces distributions sont un outil clé pour la classification probabiliste, car elles permettent de modéliser des populations hétérogènes.
 
 **4- Algorithme EM**\
 Nous détaillerons le fonctionnement de l'algorithme EM (Expectation-Maximization) et son application pour estimer les paramètres des lois de mélanges. Pour consolider la compréhension des méthodes itératives de partitionnement, nous étudierons également l'algorithme des K-means, qui est souvent présenté comme un cas particulier de l'EM sous certaines conditions
@@ -223,9 +222,6 @@ colnames(d2) <- names(decat)
 
 
 # Cours 2 - Problème du 4ème coin
-
-- Rouge bleu noir
-- Utilisation de données pour confirmer
 
 ```{r}
 #| echo: false
@@ -528,6 +524,7 @@ Cette orientation est la signature d'une covariance négative. Les éléments no
 On veut identifier le vecteur des moyennes et la matrice variance covariance les plus vraissemblable pour les données observées. C'est donc le maximum de vraissemblance. 
 
 Fonction de vraissemblance est une fonction de probabilité conditionnelles qui décrit le paramètre teta d'une loi statistique en fonctions des valeurs Xi supposées connues. 
+
 Ecrire la formule
 
 On veut maximiser la fonction donc on la dérive. Vu que l'inconnue c'est la moyenne on dérive par rapport à ça. 
@@ -565,7 +562,7 @@ ggplot(dt) +
   geom_density()
 ```
 
-Algorithme Expection Maximisation (EM)
+## Algorithme Expection Maximisation (EM)
 
 On commence par l'étape d'exepection de l'algorithme EM. Cette étape peut aussi être appelé étiquetage car c'est ici que l'on calcul la probabiltié de nos points à appartenir à tel ou tel loi.
 
