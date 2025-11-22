@@ -676,12 +676,6 @@ Le Principe du MV consiste à trouver la valeur $\hat{\theta}$ qui maximise cett
 
 Pour trouver le maximum de $L$, on cherche à résoudre $\frac{\partial L}{\partial \theta} = 0$. Cependant, manipuler le produit ($\prod$) est mathématiquement difficile.On utilise alors la Log-Vraisemblance $\log(L)$ :Le passage au logarithme transforme le produit en une somme (ce qui simplifie grandement la dérivation).La fonction $\log(x)$ est strictement croissante. Par conséquent, les paramètres $\theta$ qui maximisent $L$ sont exactement les mêmes que ceux qui maximisent $\log(L)$. Notre solution de Maximum de Vraisemblance $\hat{\theta}$ ne change pas.
 
-## Exercice 1 sur les dés
-
-![Texte alternatif](images/ex1_de.png) 
-
-
-
 ## Rappel sur Bayes Le théorème
 de bayes permet de mettre à jour la probabilité d'une hypothèse C
 (connaissance apriori) en sachant de nouvelles informations A. On
@@ -694,18 +688,7 @@ alors
 $$
 P(C_i|A) = \frac{P(A|C_i)P(C_i)}{\sum_{k=1}^K P(A|C_k)P(C_k)}
 $$
-
-
-## Exercice sur les pièces
-
-## Exercice du garagiste
-
-## Exercice 2 sur les dés
-
 # Cours 4 - Algorithme EM
-
--   Exercice à la main
--   code de l'algorithme EM
 
 Nous allons générer une loi de mélange de 2 gaussiennes
 unidimensionelles. Avec l'algorithme EM codé à la main, on essaye de
@@ -732,13 +715,7 @@ ggplot(dt) +
   aes(x = x) +
   geom_density()
 ```
-
-## Algorithme Expection Maximisation (EM)
-
-On commence par l'étape d'exepection de l'algorithme EM. Cette étape
-peut aussi être appelé étiquetage car c'est ici que l'on calcul la
-probabiltié de nos points à appartenir à tel ou tel loi.
-
+## Importation des données du groupe  
 ```{r}
 dta <- read.table("res.csv", sep = ',', dec = '.', header = TRUE)
 dta <- as.data.frame(dta[,-1])
@@ -749,6 +726,14 @@ ggplot(dta) +
   geom_density()
 ```
 
+Une fois avoir importé les données de l'autre groupe, on réalise un graphique de la densité pour avoir une idée de la distribution de leur jeu de données. 
+
+## Algorithme Expection Maximisation (EM)
+
+On commence par l'étape d'exepection de l'algorithme EM. Cette étape
+peut aussi être appelé étiquetage car c'est ici que l'on calcul la
+probabiltié de nos points à appartenir à tel ou tel loi.
+
 On estime les valeurs de départ de manière graphique. Après avoir tracer
 la densité du jeux de données qui nous a été confié, on remarque deux
 pics, qui vont correspondre a nos moyennes, on estime égallement un
@@ -758,12 +743,12 @@ tel ou tel loi on commence par estimer 50/50.
 ```{r}
 n = length(dta$x)
 
-# loi 1
+# Estimation des paramètres de la 1ere loi
 Pc1 = 0.5
 mu1 = -3
 s1 = 4
 
-# loi 2
+# Estimation des paramètres de la 2eme loi
 Pc2 = 0.5
 mu2 = 15
 s2 = 4
@@ -771,11 +756,8 @@ s2 = 4
 para = c(mu1, mu2, s1, s2, Pc1, Pc2)
 ```
 
-Dans l'algorithme EM, on commence par estimer de quelle loi proviennent
-différents points.
 
-On code ceci à la main avec les points suivants pour s'assurer de la
-robustesse de notre méthode : $x_{1} = 0, x_{2} = 5, x_{3} = 12$
+Avant de se lancer dans l'algorithme en tant que tel on réalise les calculs sur 3 points pour s'assurer que notre logique est la bonne. Les points choisis sont les suivants : $x_{1} = 0, x_{2} = 5, x_{3} = 12$
 
 ```{r}
 x1 = 0
@@ -783,7 +765,7 @@ x2 = 5
 x3 = 12
 ```
 
-On veut maintenant calculer
+On commence donc par l'étape **Expectation**. Pour chacun de nos points on calcul la probabilité d'appartenance à chaque classes en fonction des paramètres estimé graphiquement. 
 
 ```{r}
 # pour x1
@@ -817,10 +799,13 @@ print(Pc1_x3)
 print(Pc2_x3)
 ```
 
+
+## Réalisation de l'algorithme
+
 Pour tout algorithme il faut définir un critère de convergence. Dans
 notre cas nous avons choisi la log vraissemblance. Notre algorithme
 s'arrête lorsque la log vraissemblence de l'étape précédente et celle de
-l'étape actuelle sont proche. Il faut définir un seuil.
+l'étape actuelle sont proche. Il faut définir un seuil pour définir ce que veux dire proche.
 
 ```{r}
 prob <- function(mu1, mu2, s1, s2, p1, p2, x){
@@ -832,6 +817,7 @@ prob <- function(mu1, mu2, s1, s2, p1, p2, x){
 
 # a <- data.frame(x = c(0, 6, 12))
 
+# Création de la fonction réalisant l'étape E
 E <- function(para, vec){
   p <- as.data.frame(prob( mu1 = para[1], mu2 = para[2], s1 = para[3], s2 = para[4], p1 = para[5], p2 = para[6], x = vec))
   return(p)
@@ -840,7 +826,10 @@ E <- function(para, vec){
 # proba <- E(para = para, vec = dta$x)
 ```
 
-On a fini E, on réalise M, estimation des parametres de nos lois.
+Une fois l'étape E programmée, il faut programmer l'étape de **Maximisation**, M. 
+Cette étape estime les nouveaux paramètres en se basant sur les probabilité d'appartenance calculées à l'étape E. 
+
+Pour calculer mu on fait une moyenne de chaque points pondéré par leur probabilité d'appartenance à la classe. 
 
 ```{r}
 M <- function(proba){
@@ -848,7 +837,7 @@ M <- function(proba){
   Pc2 = mean(proba$p2)
 
 
-  mu1 = sum(proba$p1 * dta$x)/(n*Pc1)
+  mu1 = sum(proba$p1 * dta$x)/(n*Pc1) 
   mu2 = sum(proba$p2 * dta$x)/(n*Pc2)
   # mu1;mu2
 
@@ -861,13 +850,14 @@ M <- function(proba){
 # para <- M(proba)
 ```
 
+On réalise nos deux étapes une fois pour s'assurer que nos fonctions marchent. 
 ```{r}
 proba <- E(para = para, vec = dta$x)
 para <- M(proba)
 print(para)
 ```
 
-Calcul du log - vraissemblance
+On créer enfin la fonction du calcul de la log-vraissemblance. 
 
 ```{r}
 
@@ -883,7 +873,7 @@ logL <- function(x, param){
 logL(x = dta, para)
 ```
 
-Algo EM :
+On fait tourner notre algorithme 100 fois. 
 
 ```{r}
 logL(x = dta, para)
@@ -895,6 +885,7 @@ for (i in 1:100){
 }
 
 ```
+
 
 # Cours 5 - classification de variables fonctionnelles
 
