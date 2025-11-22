@@ -894,7 +894,7 @@ rm(list = ls())
 library(tidyverse)
 ```
 
-On charge les données.
+On charge d'abord nos données.
 
 ```{r}
 
@@ -905,8 +905,8 @@ dt <- as.data.frame(sapply(dt, as.numeric))
 ```
 
 On visualise les données. On remarque qu'elles représente des courbes.
-Ce sont donc des données fonctionnelles ont pourrais imaginer que ce
-sont des spectre infrarouge.
+Ce sont donc des données fonctionnelles on pourrais imaginer que ce
+sont des spectre infrarouge. On remarqeu que ces courbes ont trois points d'infléxions. 
 
 ```{r}
 
@@ -920,7 +920,19 @@ ggplot(dt_long, aes(x = temps, y = value, group = X)) +
 ```
 
 On a dabord pensé faire un clutering avec la méthode k means avec des
-approximation des pentes
+approximation des pentes. 
+
+## Présentation de la méthode des k-means
+
+La méthode des kmeans fait partie de la famille des algorithmes EM. Cette méthode nécessite de connaitre a priori le nombre de classes que l'on veut faire. C'est une méthode de partition stricte. 
+
+**Initialisation**, on choisi K barycentre. 
+
+**Expectetion**, on calcule la distance de chaque point au K barycentre et on l'assigne au groupe dont il est le plus proche. 
+
+**Maximisation**, on recalcule les barycentre des groupes. 
+
+On recommence jusqu'à convergence. La convergence est atteinte quand les barycentres ne bougent plus entre 2 itérations. 
 
 ```{r}
 
@@ -939,8 +951,7 @@ dt_clust$clust <- cl$cluster
 
 ```
 
-Mais On va faire des regression linéaire pour avoir quelque chose de
-plus propre (qui depend moins du bruit du premier et dernier point).
+Pour estimer la pente de nos courbes, on utilise des régrèssion linéaires. On calcule la pente entre chaque point d'inflexion, il y a donc 3 coefficients directeurs par courbe. 
 L'utilisation des coefficiants dirrecteurs pour la classification
 correspond à une extraction de features.
 
@@ -992,7 +1003,7 @@ ggplot(df_visu) +
 Ce graphique permet de montrer que notre estimation des courbes par
 leurs features n'est pas déconant.
 
-On fait un clustering
+On fait un clustering avec la méthode des kmeans comme évoqué précedement.
 
 ```{r}
 
@@ -1031,6 +1042,15 @@ ggplot(dt_long_c, aes(x = temps, y = value, group = X, colour = cluster)) +
   geom_line() 
 
 ```
+
+On réalise une classification avec le packages mclust 
+```{r}
+library(mclust)
+res_mclust<-Mclust(a[, 1:3]) #réalisation de la classification
+res_mclust$classification #affiche de la classe des individus
+```
+
+Le package à une classification très proche de la vérité sauf pour la création d'une classe supplémentaire la numéro 2 qui regroupe les pentes les plus importantes. 
 
 # Cours 6 - Topic Modelling
 
