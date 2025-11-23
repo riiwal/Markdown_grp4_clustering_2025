@@ -1,11 +1,12 @@
 ---
-title: "Resume cours Classification"
-author: "Groupe 4 - Classification"
+title: "Résumé cours Classification"
+author: "Augustin Antier - Louis Belle - Erwan Gouhier - Riwal Le Moan Delalande - Louis Prusiewicz "
 date: "2025-11-14"
 output:
   html_document:
+    self_contained: true
     toc: true
-    toc_depth: 3
+    toc_depth: 2
     toc_float: true
 editor_options: 
   markdown: 
@@ -125,13 +126,13 @@ n'est pas de prédire des étiquettes existantes, mais de mettre en
 
 Cette structure peut prendre deux formes principales :
 
-Partition stricte : Un découpage où chaque observation appartient
+**Partition stricte** : Un découpage où chaque observation appartient
 exclusivement à un seul groupe (comme la classification hiérarchique ou
 les K-means).
 
-Classification floue (ou probabiliste) : Où chaque observation se voit
-attribuer une probabilité d'appartenance à différentes classes (comme
-les modèles de lois de mélanges).
+**Classification floue** (ou probabiliste) : Où chaque observation se
+voit attribuer une probabilité d'appartenance à différentes classes
+(comme les modèles de lois de mélanges).
 
 Nous étudierons comment classifier une grande variété d'objets : des
 variables, des individus, des distributions, et même des données
@@ -177,7 +178,7 @@ particulier de l'EM sous certaines conditions
 **5- Variables fonctionelles**\
 Les variables fonctionnelles sont particulières, ce sont des courbes ou
 des fonctions. On peut donc en extraire des features facilitant la
-classifications de celles ci.
+classifications de celles-ci.
 
 **6- Topic modeling**\
 
@@ -190,29 +191,29 @@ les thèmes latents dans un corpus de documents textuels.
 
 ## Classification de variables
 
-Pour tout problème il est essentiel de savoir quel est la sortie que
-nosu attendons ainsi que de quoi nous partons. Dans le cadre de la
+Pour tout problème il est essentiel de savoir quel est **la sortie** que
+nous attendons ainsi que notre **point de départ**. Dans le cadre de la
 classification de variables on dispose d'une matrice de dimension n\*p
 (n : nombre d'individus ; p : nombre de variable). L'objectif est
 d'obtenir une matrice de distance entre nos variables deux à deux. Cette
-matrice D serait donc de dimension p\*p.
+**matrice D** serait donc de dimension p\*p.
 
-### C'est quoi une distance ?
+### Qu'est ce qu'une distance ?
 
-Une fois avoir définie la matrice de distance comme objectif il est
-nécessaire de réfléchir à ce que signifie la notion de distance entre
-deux variables. Dans notre cas nous avont choisi comme définition de la
-distance de variable l'écart orthogonal qui varie entre 0 et 1.
+Il est nécessaire de réfléchir à ce que signifie la notion de distance
+entre deux variables. Dans notre cas nous avont choisi comme définition
+de la distance de variable l'écart orthogonal qui varie entre 0 et 1.
 
-Cette définition de la distance ce traduit par : - Deux variables
-proches sont deux variables qui évoluent de manière conjointe
-positivement ou négativement et qui ont une distance proche de 0. - Deux
-variables loins sont deux variables orthogonales qui évoluent de manière
-disjointe ou indépendante. Elles ont une distance proche de 1.
+Cette définition de la distance ce traduit par : - **Deux variables
+proches** sont deux variables qui évoluent de manière conjointe
+positivement ou négativement et qui ont une distance proche de 0. -
+**Deux variables eloignées** sont deux variables orthogonales qui
+évoluent de manière disjointe ou indépendante. Elles ont une distance
+proche de 1.
 
 ### Calcul
 
-```{r}
+```{r, include=FALSE}
 #| echo: false
 rm(list = ls())
 
@@ -243,8 +244,10 @@ diagsig <- diag(sig_decat)
 
 decat_cr <- decat_c %*% diagsig
 
+# Création de la matrice des corrélations r
 cor_decat_cr <- 1/(n-1) * (t(decat_cr)  %*% decat_cr)
 
+# Calcul que la matrice de distance 1-r^2
 d = matrix(1, nrow = p, ncol = p) - cor_decat_cr**2
 
 d <- round(d,2)
@@ -253,30 +256,18 @@ row.names(d) <- names(decat)
 colnames(d) <- names(decat)
 ```
 
-1- centrer réduire les X 2- Créer une mariche varience covarience X'X de
-dimension p\*p 3- Matrice de corréation r 4- 1-\|r\|
-
-1-r\^2 1-r -\> ça fait que si des variables évoluent de manière jointe
-mais négativement elles sont loin.
-
-Dans la méthode ci-dessus, on s'intéresse au sinus entre 2 variables (si
-elles sont opposée, cor = -1), on les considère comme proche
-
-Pour faire plaisir à Louis (B), on défini la distance comme un angle
-entre nos variables. Comme précédemment, on s'intéresse au carré de la
-correlation.
-
-```{r}
-d2 <- acos(sqrt(abs(cor_decat_cr)))
-d2 <- round(d2,2)
-
-row.names(d2) <- names(decat)
-colnames(d2) <- names(decat)
-```
+La distance $\mathbf{D}_{ij} = 1 - \mathbf{r}_{ij}^2$ mesure la
+redondance informationnelle. Le coefficient de détermination
+$\mathbf{r}^2$ représente la proportion de variance commune entre deux
+variables. Par conséquent, minimiser cette distance revient à maximiser
+la variance partagée (ou la colinéarité). Cela garantit que les
+variables fortement corrélées (que ce soit positivement ou
+négativement), qui mesurent essentiellement la même dimension latente,
+seront regroupées ensemble.
 
 # Cours 2 - Problème du 4ème coin
 
-```{r}
+```{r,include=FALSE}
 #| echo: false
 #| message: false
 #| warning: false
@@ -286,14 +277,20 @@ library(Factoshiny)
 
 Classification ascendante hiérarchique sur un jeu de donnée particulier
 
-Problématique : Quid de la qualité des données ?
-
-Le jeu de donnée est composé de 3 blocs. Le premier comporte 1063
+Le jeu de donnée est composé de **3 blocs**. Le premier comporte 1063
 consommateurs qui ont notés 30 saumons. Un second bloc comporte les
 réponses qualitatives des consommateurs à des questions d'usage et
 d'attitude (sur leur mode de consommation du saumon par exemple). Le
 troisième bloc comporte pour chaque saumon des informations physico
 chimiques. Les individus de ce bloc sont donc des variables.
+
+Notre objectif est de faire le lien entre ces trois blocs de variables
+pour voir si les consommateurs ont apprécié des saumons dont la réalité
+physique (taux de sel, ph) correspond avec leurs habitudes de
+consommations.
+
+Cette méthode va donc nous permettre de vérifier de la **qualité de nos
+données**.
 
 ```{r}
 #| message: false
@@ -367,21 +364,21 @@ res_HCP2 <- HCPC(res_pca2, nb.clust = 3, graph = FALSE)
 res_HCP2$desc.var$category$`3`[1:5,]
 ```
 
-L'objet desc.var des resultats de la fonction HCPC est un catdes réalisé
-sur la variable de classe. - La colonne Cla/Mod indique le pourcentage
-d'individue de la classe qui ont pris cette modalité. - La colonne
-Mod/Cla indique le pourcentage d'individus qui ont pris cette modalité
-qui sont la classe. - Global est le pourcentage global d'individus qui
-ont pris cette modalité dans le jeu de données.
+L'objet **desc.var** des resultats de la fonction HCPC est un catdes
+réalisé sur la variable de classe. - La **colonne Cla/Mod** indique le
+pourcentage d'individue de la classe qui ont pris cette modalité. - La
+**colonne Mod/Cla** indique le pourcentage d'individus qui ont pris
+cette modalité qui sont la classe. - **Global** est le pourcentage
+global d'individus qui ont pris cette modalité dans le jeu de données.
 
 Le test perfomé sert à voir si la modalité est sur ou sous-représenté
 parmi les individus de la classe.
 
-Le groupe 3 préfère consommé des saumons salés. Ils consomment le saumon
-pour ses apsect bénéfique pour la santé (oméga 3). C'est un goupe ou les
-pesonnes qui consomment le saumon sont principelement des adultes. Ils
-apprécient le goût caractéristique du saumon et le consomme plutôt seul
-(sans pain beurre ou citron).
+**Le groupe 3** préfère consommer des saumons salés. Ils consomment le
+saumon pour ses apsects bénéfique pour la santé (oméga 3). C'est un
+goupe ou les pesonnes qui consomment le saumon sont principelement des
+adultes. Ils apprécient le goût caractéristique du saumon et le consomme
+plutôt seul (sans pain beurre ou citron).
 
 On veut maintenant s'assurer que cette caractérisation des classes n'est
 pas décorellée de la réalité physique des produits. On va donc projeter
@@ -451,18 +448,18 @@ cohérentes avec la réalité physique de nos produits.
 
 # Cours 3 - modèle de mélange
 
-Une loi de mélange est définie comme une combinaison linéaire de
+Une loi de mélange est définie comme une **combinaison linéaire** de
 fonctions de densité de probabilité.
 
-Les paramètres d'une loi normale (ou gaussienne) sont la moyenne ($\mu$)
-et la variance ($\sigma^2$), ou parfois l'écart-type ($\sigma$).
+Les paramètres d'une **loi normale** (ou gaussienne) sont la moyenne
+($\mu$) et la variance ($\sigma^2$), ou parfois l'écart-type ($\sigma$).
 
-Les paramètres d'une loi normale multidimensionnelle (ou multivariée)
-sont le vecteur de moyennes ($\boldsymbol{\mu}$) et la matrice de
-variance-covariance ($\boldsymbol{\Sigma}$).
+Les paramètres d'une **loi normale multidimensionnelle** (ou
+multivariée) sont le vecteur de moyennes ($\boldsymbol{\mu}$) et la
+matrice de variance-covariance ($\boldsymbol{\Sigma}$).
 
-La fonction de densité d'une gaussienne s'écrit de la manière suivante :
-$$
+La **fonction de densité** d'une gaussienne s'écrit de la manière
+suivante : $$
 f(x; \mu, \sigma) = f(x) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2\right)
 $$
 
@@ -544,7 +541,7 @@ plot_bivariate_normal_3d_final <- function(Z, title) {
 
 ```
 
-## Variabilité isolée
+### Variabilité isolée
 
 ```{r, include=TRUE}
 #| echo: false
@@ -552,7 +549,7 @@ plot_bivariate_normal_3d_final <- function(Z, title) {
 #| warning: false
 mu_1 <- c(0, 0)
 Sigma_1 <- matrix(c(1, 0, 0, 1), nrow = 2) # Sigma = I
-title_1 <- "1. Covariance Nulle"
+title_1 <- "Variabilité isolée"
 
 data_1 <- calculate_density(mu_1, Sigma_1)
 plot_bivariate_normal_2d(data_1$data_2d, title_1)
@@ -565,14 +562,15 @@ la forme est parfaitement circulaire à la base. En projection 2D
 (courbes de niveau), ceci se traduit par des cercles concentriques.
 
 Cette configuration signifie que la matrice de variance-covariance
-($\boldsymbol{\Sigma}$) est diagonale (les éléments non diagonaux sont
-nuls). Il en résulte une covariance nulle et donc une corrélation nulle
-entre les variables $X$ et $Y$. Autrement dit, la variable $X$ n'a
-aucune influence linéaire sur la variable $Y$, et vice-versa. La
-variabilité est isotrope (uniforme dans toutes les directions), ne
-permettant pas d'identifier d'axe privilégié de dispersion.
+($\boldsymbol{\Sigma}$) est **diagonale** (les éléments non diagonaux
+sont nuls). Il en résulte une **covariance nulle** et donc une
+corrélation nulle entre les variables $X$ et $Y$. Autrement dit, la
+variable $X$ n'a aucune influence linéaire sur la variable $Y$, et
+vice-versa. La variabilité est isotrope (uniforme dans toutes les
+directions), ne permettant pas d'identifier d'axe privilégié de
+dispersion.
 
-## Covariance Positive
+### Covariance Positive
 
 ```{r, include=TRUE}
 #| echo: false
@@ -580,7 +578,7 @@ permettant pas d'identifier d'axe privilégié de dispersion.
 #| warning: false
 mu_2 <- c(0, 0)
 Sigma_2 <- matrix(c(1, 0.7, 0.7, 1), nrow = 2) # Corrélation positive
-title_2 <- "2. Covariance Positive"
+title_2 <- "Covariance Positive"
 
 data_2 <- calculate_density(mu_2, Sigma_2)
 plot_bivariate_normal_2d(data_2$data_2d, title_2)
@@ -593,13 +591,13 @@ s'étire pour former une crête ressemblant à un "aileron de requin". En
 une diagonale montante (du quadrant inférieur gauche au supérieur
 droit).
 
-Ce motif indique une covariance positive significative entre $X$ et $Y$.
-Les éléments non diagonaux de la matrice $\boldsymbol{\Sigma}$ sont
+Ce motif indique une **covariance positive** significative entre $X$ et
+$Y$. Les éléments non diagonaux de la matrice $\boldsymbol{\Sigma}$ sont
 positifs. Cela signifie qu'une augmentation de la valeur de $X$ est
 associée à une augmentation de la valeur de $Y$ (et inversement). La
 corrélation entre les deux variables est positive.
 
-## Vecteur de moyenne différent
+### Vecteur de moyenne différent
 
 ```{r, include=TRUE}
 #| echo: false
@@ -607,7 +605,7 @@ corrélation entre les deux variables est positive.
 #| warning: false
 mu_3 <- c(1.5, 1.0) # Décalage du centre
 Sigma_3 <- Sigma_2 # Même corrélation positive
-title_3 <- "3. Covariance Positive"
+title_3 <- "Vecteur de moyenne différent"
 
 data_3 <- calculate_density(mu_3, Sigma_3)
 plot_bivariate_normal_2d(data_3$data_2d, title_3)
@@ -626,7 +624,7 @@ déterminées par la matrice $\boldsymbol{\Sigma}$ et restent identiques,
 tandis que la position du centre (le point de densité maximale) est
 définie par le vecteur $\boldsymbol{\mu}$.
 
-## Covarience négative
+### Covarience négative
 
 ```{r, include=TRUE}
 #| echo: false
@@ -634,7 +632,7 @@ définie par le vecteur $\boldsymbol{\mu}$.
 #| warning: false
 mu_4 <- c(0, 0)
 Sigma_4 <- matrix(c(1, -0.7, -0.7, 1), nrow = 2) # Corrélation négative
-title_4 <- "4. Covariance Négative"
+title_4 <- "Covariance Négative"
 
 data_4 <- calculate_density(mu_4, Sigma_4)
 plot_bivariate_normal_2d(data_4$data_2d, title_4)
@@ -645,60 +643,82 @@ L'aileron de requin s'est inversé. Il est maintenant orienté selon une
 diagonale descendante (du quadrant supérieur gauche à l'inférieur
 droit). En 2D, les ellipses suivent cette même orientation.
 
-Cette orientation est la signature d'une covariance négative. Les
+Cette orientation est la signature d'une **covariance négative**. Les
 éléments non diagonaux de la matrice $\boldsymbol{\Sigma}$ sont
 négatifs. Cela signifie qu'une augmentation de la valeur de $X$ est
 associée à une diminution de la valeur de $Y$. La corrélation entre les
 variables est négative.
 
 ## Comment généer un loi de mélange gaussienne
-La génération d'une loi de mélange gaussienne se passe en 2 étapes : 
 
--   Choix de la classe avec une probabilité à priori $\pi_k = P(C_k)$
--   Génération de l'observation : : Pour la classe $C_k$ sélectionnée, on tire l'observation $X_i$ selon sa distribution Gaussienne correspondante, caractérisée par un vecteur des moyennes $\mu_k$ et une matrice de variance-covariance $\Sigma_k$.
+La génération d'une loi de mélange gaussienne se passe en 2 étapes :
 
+-   **Choix de la classe** avec une probabilité à priori
+    $\pi_k = P(C_k)$
+-   **Génération de l'observation** : : Pour la classe $C_k$
+    sélectionnée, on tire l'observation $X_i$ selon sa distribution
+    Gaussienne correspondante, caractérisée par un vecteur des moyennes
+    $\mu_k$ et une matrice de variance-covariance $\Sigma_k$.
 
 ## Estimer les paramètres d'une loi de mélange
 
-Pour modéliser les données observées $\mathbf{X} = \{X_1, \ldots, X_n\}$ à l'aide d'une Loi de Mélange Gaussienne (GMM), notre objectif est d'identifier l'ensemble des paramètres $\theta$ du modèle qui sont les plus vraisemblables étant donné les données.Les paramètres $\theta$ que nous cherchons à estimer sont :
-- Les probabilités a priori ($\pi_k$) des classes.
-- Le vecteur des moyennes ($\mu_k$) de chaque composante Gaussienne.
-- La matrice de variance-covariance ($\Sigma_k$) de chaque composante Gaussienne.
+Pour modéliser les données observées $\mathbf{X} = \{X_1, \ldots, X_n\}$
+à l'aide d'une Loi de Mélange Gaussienne (GMM), notre objectif est
+d'identifier l'ensemble des paramètres $\theta$ du modèle qui sont les
+plus vraisemblables étant donné les données.Les paramètres $\theta$ que
+nous cherchons à estimer sont : - Les **probabilités a priori**
+($\pi_k$) des classes. - Le **vecteur des moyennes** ($\mu_k$) de chaque
+composante Gaussienne. - La **matrice de variance-covariance**
+($\Sigma_k$) de chaque composante Gaussienne.
 
-La méthode utilisée pour trouver ces paramètres est le Maximum de Vraisemblance (MV).
+La méthode utilisée pour trouver ces paramètres est le **Maximum de
+Vraisemblance** (MV).
 
-La Fonction de Vraisemblance $L(\mathbf{X}; \theta)$ est une mesure qui quantifie la "plausibilité" des paramètres $\theta$ pour générer l'ensemble de données $\mathbf{X}$ que nous avons observé.
+La fonction de vraisemblance $L(\mathbf{X}; \theta)$ est une mesure qui
+quantifie la "plausibilité" des paramètres $\theta$ pour générer
+l'ensemble de données $\mathbf{X}$ que nous avons observé.
 
 $$
 L(X_1, \ldots, X_n; \theta) = \prod_{i=1}^n f(X_i; \theta)
-$$ 
-Le Principe du MV consiste à trouver la valeur $\hat{\theta}$ qui maximise cette fonction $L$.
+$$ Le Principe du MV consiste à trouver la valeur $\hat{\theta}$ qui
+maximise cette fonction $L$.
 
-Pour trouver le maximum de $L$, on cherche à résoudre $\frac{\partial L}{\partial \theta} = 0$. Cependant, manipuler le produit ($\prod$) est mathématiquement difficile.On utilise alors la Log-Vraisemblance $\log(L)$ :Le passage au logarithme transforme le produit en une somme (ce qui simplifie grandement la dérivation).La fonction $\log(x)$ est strictement croissante. Par conséquent, les paramètres $\theta$ qui maximisent $L$ sont exactement les mêmes que ceux qui maximisent $\log(L)$. Notre solution de Maximum de Vraisemblance $\hat{\theta}$ ne change pas.
+Pour trouver le maximum de $L$, on cherche à résoudre
+$\frac{\partial L}{\partial \theta} = 0$. Cependant, manipuler le
+produit ($\prod$) est mathématiquement difficile.On utilise alors la
+Log-Vraisemblance $\log(L)$ :Le passage au logarithme transforme le
+produit en une somme (ce qui simplifie la dérivation).La fonction
+$\log(x)$ est strictement croissante. Par conséquent, les paramètres
+$\theta$ qui maximisent $L$ sont exactement les mêmes que ceux qui
+maximisent $\log(L)$. Notre solution de Maximum de Vraisemblance
+$\hat{\theta}$ ne change pas.
 
 ## Rappel sur Bayes Le théorème
+
 de bayes permet de mettre à jour la probabilité d'une hypothèse C
-(connaissance apriori) en sachant de nouvelles informations A. On
-considère une partition 
-$$
+(connaissance apriori) en sachant de nouvelles informations A.
+
+On considère une partition $$
 \{C_1, C_2, \ldots, C_K\}
-$$ 
-alors 
+$$ alors
 
 $$
 P(C_i|A) = \frac{P(A|C_i)P(C_i)}{\sum_{k=1}^K P(A|C_k)P(C_k)}
 $$
+
 # Cours 4 - Algorithme EM
 
-Nous allons générer une loi de mélange de 2 gaussiennes
+Nous allons générer une **loi de mélange** de 2 gaussiennes
 unidimensionelles. Avec l'algorithme EM codé à la main, on essaye de
 retrouver les paramètres d'une loi de mélange générée par un autre
 groupe. On gnénère notre vecteur avec le code suivant :
 
-```{r}
+```{r,include=FALSE}
 rm(list = ls())
 library(tidyverse)
+```
 
+```{r}
 n = 500 #Nombre d'individus 
 mu1 = 0.7 # Moyenne de la première loi
 mu2 = 1.3 # Moyenne de la deuxième loi
@@ -715,7 +735,9 @@ ggplot(dt) +
   aes(x = x) +
   geom_density()
 ```
-## Importation des données du groupe  
+
+## Importation des données du groupe
+
 ```{r}
 dta <- read.table("res.csv", sep = ',', dec = '.', header = TRUE)
 dta <- as.data.frame(dta[,-1])
@@ -726,19 +748,21 @@ ggplot(dta) +
   geom_density()
 ```
 
-Une fois avoir importé les données de l'autre groupe, on réalise un graphique de la densité pour avoir une idée de la distribution de leur jeu de données. 
+Une fois avoir importé les données de l'autre groupe, on réalise un
+graphique de la densité pour avoir une idée de la distribution de leur
+jeu de données.
 
 ## Algorithme Expection Maximisation (EM)
 
-On commence par l'étape d'exepection de l'algorithme EM. Cette étape
-peut aussi être appelé étiquetage car c'est ici que l'on calcul la
+On commence par l'étape **d'exepection** (E) de l'algorithme EM. Cette
+étape peut aussi être appelé étiquetage car c'est ici que l'on calcul la
 probabiltié de nos points à appartenir à tel ou tel loi.
 
 On estime les valeurs de départ de manière graphique. Après avoir tracer
-la densité du jeux de données qui nous a été confié, on remarque deux
+la densité du jeu de données qui nous a été confié, on remarque deux
 pics, qui vont correspondre a nos moyennes, on estime égallement un
-écart type (dire comment on fait). Pour la probabilité d'appartenir à
-tel ou tel loi on commence par estimer 50/50.
+écart type en se basant sur la largeur du pic. Pour la probabilité
+d'appartenir à telle ou telle loi on commence par estimer 50/50.
 
 ```{r}
 n = length(dta$x)
@@ -756,8 +780,9 @@ s2 = 4
 para = c(mu1, mu2, s1, s2, Pc1, Pc2)
 ```
 
-
-Avant de se lancer dans l'algorithme en tant que tel on réalise les calculs sur 3 points pour s'assurer que notre logique est la bonne. Les points choisis sont les suivants : $x_{1} = 0, x_{2} = 5, x_{3} = 12$
+Avant de se lancer dans l'algorithme en tant que tel on réalise les
+calculs sur 3 points pour s'assurer que notre logique est la bonne. Les
+points choisis sont les suivants : $x_{1} = 0, x_{2} = 5, x_{3} = 12$
 
 ```{r}
 x1 = 0
@@ -765,7 +790,9 @@ x2 = 5
 x3 = 12
 ```
 
-On commence donc par l'étape **Expectation**. Pour chacun de nos points on calcul la probabilité d'appartenance à chaque classes en fonction des paramètres estimé graphiquement. 
+On commence donc par l'étape **Expectation**. Pour chacun de nos points
+on calcul la probabilité d'appartenance à chaque classes en fonction des
+paramètres estimé graphiquement.
 
 ```{r}
 # pour x1
@@ -799,13 +826,13 @@ print(Pc1_x3)
 print(Pc2_x3)
 ```
 
-
 ## Réalisation de l'algorithme
 
-Pour tout algorithme il faut définir un critère de convergence. Dans
-notre cas nous avons choisi la log vraissemblance. Notre algorithme
+Pour tout algorithme il faut définir un **critère de convergence**. Dans
+notre cas nous avons choisi la **log vraissemblance**. Notre algorithme
 s'arrête lorsque la log vraissemblence de l'étape précédente et celle de
-l'étape actuelle sont proche. Il faut définir un seuil pour définir ce que veux dire proche.
+l'étape actuelle sont proche. Il faut définir un seuil pour définir ce
+que veux dire proche.
 
 ```{r}
 prob <- function(mu1, mu2, s1, s2, p1, p2, x){
@@ -826,10 +853,12 @@ E <- function(para, vec){
 # proba <- E(para = para, vec = dta$x)
 ```
 
-Une fois l'étape E programmée, il faut programmer l'étape de **Maximisation**, M. 
-Cette étape estime les nouveaux paramètres en se basant sur les probabilité d'appartenance calculées à l'étape E. 
+Une fois l'étape E programmée, il faut programmer l'étape de
+**Maximisation**, M. Cette étape estime les nouveaux paramètres en se
+basant sur les probabilité d'appartenance calculées à l'étape E.
 
-Pour calculer mu on fait une moyenne de chaque points pondéré par leur probabilité d'appartenance à la classe. 
+Pour calculer mu on fait une moyenne de chaque points pondéré par leur
+probabilité d'appartenance à la classe.
 
 ```{r}
 M <- function(proba){
@@ -850,14 +879,16 @@ M <- function(proba){
 # para <- M(proba)
 ```
 
-On réalise nos deux étapes une fois pour s'assurer que nos fonctions marchent. 
+On réalise nos deux étapes une fois pour s'assurer que nos fonctions
+marchent.
+
 ```{r}
 proba <- E(para = para, vec = dta$x)
 para <- M(proba)
 print(para)
 ```
 
-On créer enfin la fonction du calcul de la log-vraissemblance. 
+On créer enfin la fonction du calcul de la log-vraissemblance.
 
 ```{r}
 
@@ -873,23 +904,22 @@ logL <- function(x, param){
 logL(x = dta, para)
 ```
 
-On fait tourner notre algorithme 100 fois. 
+On fait tourner notre algorithme 100 fois.
 
 ```{r}
 logL(x = dta, para)
 for (i in 1:100){
   proba <- E(para = para, vec = dta$x)
   para <- M(proba)
-  print(para)
-  print(logL(x = dta, para))
+  #print(para)
+  #print(logL(x = dta, para))
 }
-
+print(para)
 ```
-
 
 # Cours 5 - classification de variables fonctionnelles
 
-```{r}
+```{r,include=FALSE}
 rm(list = ls())
 library(tidyverse)
 ```
@@ -904,9 +934,10 @@ dt <- as.data.frame(sapply(dt, as.numeric))
 
 ```
 
-On visualise les données. On remarque qu'elles représente des courbes.
-Ce sont donc des données fonctionnelles on pourrais imaginer que ce
-sont des spectre infrarouge. On remarqeu que ces courbes ont trois points d'infléxions. 
+On visualise les données. On remarque qu'elles représentent des courbes.
+Ce sont donc des **données fonctionnelles**. Un exemple typique de
+données fonctionnelles sont des courbes d'absorbtion. On remarque que
+ces courbes ont trois points d'infléxions.
 
 ```{r}
 
@@ -919,20 +950,24 @@ ggplot(dt_long, aes(x = temps, y = value, group = X)) +
 
 ```
 
-On a dabord pensé faire un clutering avec la méthode k means avec des
-approximation des pentes. 
+La première idées est de réaliser une classification avec **K means** en
+résumant les courbes par les pentes entre leurs points d'infléxions.
 
 ## Présentation de la méthode des k-means
 
-La méthode des kmeans fait partie de la famille des algorithmes EM. Cette méthode nécessite de connaitre a priori le nombre de classes que l'on veut faire. C'est une méthode de partition stricte. 
+La méthode des **kmeans** fait partie de la famille des algorithmes EM.
+Cette méthode nécessite de connaitre a priori le nombre de classes que
+l'on veut faire. C'est une méthode de partition stricte.
 
-**Initialisation**, on choisi K barycentre. 
+-   **Initialisation**, on choisi K barycentre.
 
-**Expectetion**, on calcule la distance de chaque point au K barycentre et on l'assigne au groupe dont il est le plus proche. 
+-   **Expectetion**, on calcule la distance de chaque point au K
+    barycentre et on l'assigne au groupe dont il est le plus proche.
 
-**Maximisation**, on recalcule les barycentre des groupes. 
+-   **Maximisation**, on recalcule les barycentre des groupes.
 
-On recommence jusqu'à convergence. La convergence est atteinte quand les barycentres ne bougent plus entre 2 itérations. 
+On recommence jusqu'à convergence. La convergence est atteinte quand les
+barycentres ne bougent plus entre 2 itérations.
 
 ```{r}
 
@@ -951,9 +986,11 @@ dt_clust$clust <- cl$cluster
 
 ```
 
-Pour estimer la pente de nos courbes, on utilise des régrèssion linéaires. On calcule la pente entre chaque point d'inflexion, il y a donc 3 coefficients directeurs par courbe. 
-L'utilisation des coefficiants dirrecteurs pour la classification
-correspond à une extraction de features.
+Pour estimer la pente de nos courbes, on utilise des **régressions
+linéaires**. On calcule la pente entre chaque point d'inflexion, il y a
+donc 3 coefficients directeurs par courbe. L'utilisation des
+coefficiants dirrecteurs pour la classification correspond à une
+**extraction de features**.
 
 ```{r}
 get_slope <- function(x) {
@@ -1003,7 +1040,8 @@ ggplot(df_visu) +
 Ce graphique permet de montrer que notre estimation des courbes par
 leurs features n'est pas déconant.
 
-On fait un clustering avec la méthode des kmeans comme évoqué précedement.
+On fait un clustering avec la méthode des kmeans comme évoqué
+précedement.
 
 ```{r}
 
@@ -1013,8 +1051,8 @@ dt_clust2$cluster <- cl$cluster
 
 ```
 
-On plot les coeficients directeurs sur les trois zones en fonction des
-clusters
+On représente grapgiquement les coeficients directeurs sur les trois
+zones en fonction des clusters.
 
 ```{r}
 
@@ -1028,7 +1066,7 @@ ggplot(a_long, aes(x = temps, y = value, col = cluster)) +
 
 ```
 
-On plot les courbes en les coloriant par cluster
+On représente les courbes en les colorant par leur cluster.
 
 ```{r}
 
@@ -1043,34 +1081,43 @@ ggplot(dt_long_c, aes(x = temps, y = value, group = X, colour = cluster)) +
 
 ```
 
-On réalise une classification avec le packages mclust 
+Pour comparaison, on effectue une classification à l’aide du package
+**mclust**, spécialisé dans la **classification et la modélisation de
+données selon des mélanges de lois normales** (Gaussian Mixture Models).
+Ce package détermine automatiquement le **nombre optimal de classes** et
+les **paramètres des distributions** associées à chaque cluster.
+
 ```{r}
 library(mclust)
 res_mclust<-Mclust(a[, 1:3]) #réalisation de la classification
 res_mclust$classification #affiche de la classe des individus
 ```
 
-Le package à une classification très proche de la vérité sauf pour la création d'une classe supplémentaire la numéro 2 qui regroupe les pentes les plus importantes. 
+Le résultat obtenu avec *mclust* est très proche de la classification de
+référence. Toutefois, le modèle crée une classe supplémentaire (la
+classe numéro 2) qui regroupe les individus présentant les pentes les
+plus importantes, indiquant une sous-structure détectée automatiquement
+par l’algorithme.
 
 # Cours 6 - Topic Modelling
 
-Le Topic modeling est une méthode de NLP (natural language processing).
-C'est une exploration non supervisé d'un ensemble de textes (appelés
-documents par la suite), afin de produir un ensemble de sommaire de
-termes (mots) représentant l'ensmble des thèmes principaux (Topics)
-abordés dans le corpus de document.
+Le **Topic modeling** est une méthode de NLP (natural language
+processing). C'est une exploration non supervisé d'un ensemble de textes
+(appelés **documents** par la suite), afin de produir un ensemble de
+sommaire de **termes** (mots) représentant l'ensmble des **thèmes
+principaux** (Topics) abordés dans le corpus de document.
 
 Nous nous sommes basés sur l'article "Latent Dirichlet Allocation" de
 David M.BLei.
 
 Lors de la lecture d'un article scientifique sur les statistique la
-première question à se poser c'est quel est notre objet statistique.
+première question à se poser c'est quel est notre **objet statistique**.
 Dans notre cas l'objet statistique d'intérêt c'est le document.
 
 La première question à se poser c'est qu'est ce qu'un "document" ?
 
-Un document est composé de plusieurs Topics. Chaque Topics est une
-distribution de mots. La difficulté par rapport aux lois de mélange
+Un **document** est composé de plusieurs Topics. Chaque Topics est une
+**distribution de mots**. La difficulté par rapport aux lois de mélange
 c'est qu'on ne calcul plus une probabilité d'appartenance mais une
 distribution (une probabilité de probabilité) car un document est
 composé de plusieurs Topics.
@@ -1082,16 +1129,16 @@ document.
 
 Comment on modélise un "document" ? Quel est le processus génératif ?
 
-On fixe nos hyperparamètres K (le nombre de topics) alpha et beta.
+On fixe nos hyperparamètres K (le nombre de topics) $\alpha$ et $\beta$
 
-alpha et beta traduisent la poly thématique des documents ainsi que la
-richesse lexicale des topics.
+$\alpha$ et $\beta$ traduisent la poly thématique des documents ainsi
+que la richesse lexicale des topics.
 
 Nous avons trois objets principaux :
 
 Doc \<--\> Topics \<--\> Mots
 
-Le processus de génération est hiérarchique.
+Le processus de génération est **hiérarchique**.
 
 La première étape consiste à créer les topics en leur attribuants des
 mots.
@@ -1102,9 +1149,9 @@ documents. Une fois le Topics selectionné on dire un mot dans la
 distribution de mot, c'est ce mot tiré qui sera notre premier mot. Ce
 procesus est répété pour chaque mot du document.
 
-Dans LDA il y a Dirichlet, mais qu'est ce qu'une loi de Dirichlet ? Pour
-mieux comprendre on peut se placer dans le cas de K=2, c'est à dire avec
-deux Topics. Dans ce cas, on suit une Loi beta.
+Dans LDA il y a **Dirichlet**, mais qu'est ce qu'une loi de Dirichlet ?
+Pour mieux comprendre on peut se placer dans le cas de K=2, c'est à dire
+avec deux Topics. Dans ce cas, on suit une **loi beta**.
 
 Le document 1 à 52% de Topic 1 et 48% de Topic 2 Le document 2 à 51% de
 Topic 1 et 49% de Topic 2
@@ -1119,21 +1166,27 @@ Beta pour une problème a plus de deux classes.
 La dernière question que l'on se pose c'est comment la machine fait pour
 faire le Topic modeling. Pour celà nous alons faire un exemple simple
 
-Doc1 : Une *banque* me *pête* de l'*argent* pour une *dette* Doc2 : La
-*banque* *investit* dans la *dette* de l'*état* Doc3 : Le *poisson* est
-bon pour la *santé* Doc4 : *Manger* du *poisson* est bon pour la *santé*
+Doc1 : Une *banque* me *pête* de l'*argent* pour une *dette* 
+
+Doc2 : La *banque* *investit* dans la *dette* de l'*état* 
+
+Doc3 : Le *poisson* est bon pour la *santé* 
+
+Doc4 : *Manger* du *poisson* est bon pour la *santé*
+
 
 La première étape consiste à enlever les mots qui ne portent pas de
 sens.
 
 Ensuite on mets les mots dans des Topics au hasard. On sait combien il y
-a de Topics car on a fixé nos hyper paramètres
+a de Topics car on a fixé nos hyper paramètres.
 
-T1 : banque, prête, poisson, manger .... T2 : Banque, dette, investit,
-santé ........
+T1 : banque, prête, poisson, manger .... 
 
-ici Banque est dans 2 Topics différents. C'est car la machine ne fait
-pas le liens entre les deux mots, elle les prends comme deux entité
+T2 : Banque, dette, investit, santé ........
+
+Ici Banque est dans 2 Topics différents. C'est car la machine ne fait
+pas le liens entre les deux mots, elle les prends comme deux entités
 différentes.
 
 Une fois les Topics "initialisé" il faut réfléchir à comment on fait
@@ -1144,7 +1197,7 @@ dans ce mode opératoire on veut que ça converge, c'est à dire que les
 mots ne changent plus de Topics (ou seulement à la marge).
 
 Pour affiner les Topics, on va sortir un mot d'un topic, et le réafecter
-en fonction de critère d'affinité.
+en fonction de **critère d'affinité**.
 
 Il nous en faut deux un pour le Topic et un pour le document. On veut
 qu'un mot soit avec les mots utilisé dans le documents mais aussi des
