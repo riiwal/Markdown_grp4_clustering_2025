@@ -1166,13 +1166,13 @@ Beta pour une problème a plus de deux classes.
 La dernière question que l'on se pose c'est comment la machine fait pour
 faire le Topic modeling. Pour celà nous alons faire un exemple simple
 
-Doc1 : Une *banque* me *pête* de l'*argent* pour une *dette* 
+**Doc1** : Une *banque* me *pête* de l'*argent* pour une *dette* 
 
-Doc2 : La *banque* *investit* dans la *dette* de l'*état* 
+**Doc2** : La *banque* *investit* dans la *dette* de l'*état* 
 
-Doc3 : Le *poisson* est bon pour la *santé* 
+**Doc3** : Le *poisson* est bon pour la *santé* 
 
-Doc4 : *Manger* du *poisson* est bon pour la *santé*
+**Doc4** : *Manger* du *poisson* est bon pour la *santé*
 
 
 La première étape consiste à enlever les mots qui ne portent pas de
@@ -1181,9 +1181,9 @@ sens.
 Ensuite on mets les mots dans des Topics au hasard. On sait combien il y
 a de Topics car on a fixé nos hyper paramètres.
 
-T1 : banque, prête, poisson, manger .... 
+**T1** : banque, prête, poisson, manger .... 
 
-T2 : Banque, dette, investit, santé ........
+**T2** : Banque, dette, investit, santé ........
 
 Ici Banque est dans 2 Topics différents. C'est car la machine ne fait
 pas le liens entre les deux mots, elle les prends comme deux entités
