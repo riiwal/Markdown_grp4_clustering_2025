@@ -1,15 +1,19 @@
 ---
 title: "Résumé cours Classification"
-author: "Augustin Antier - Louis Belle - Erwan Gouhier - Riwal Le Moan Delalande - Louis Prusiewicz "
+author: "Augustin Antier - Louis Belle - Erwan Gouhier - Riwal Le Moan Delalande -
+  Louis Prusiewicz "
 date: "2025-11-14"
 output:
+  pdf_document:
+    toc: true
+    toc_depth: '2'
   html_document:
     self_contained: true
     toc: true
     toc_depth: 2
     toc_float: true
-editor_options: 
-  markdown: 
+editor_options:
+  markdown:
     wrap: 72
 ---
 
@@ -159,7 +163,7 @@ classification hiérarchique.
 **2- Problème du 4eme coin ?**\
 C'est un problème très présent en biologie mais que l'on retrouve dans
 d'autre discipline. Pour résoudre ce problème une méthode de
-classification ascendente hiérarchique sera mise en place.
+classification ascendante hiérarchique sera mise en place.
 
 **3 - Loi de mélanges**\
 Cette partie introduit les concepts de lois de mélanges, en se
@@ -201,13 +205,13 @@ d'obtenir une matrice de distance entre nos variables deux à deux. Cette
 ### Qu'est ce qu'une distance ?
 
 Il est nécessaire de réfléchir à ce que signifie la notion de distance
-entre deux variables. Dans notre cas nous avont choisi comme définition
+entre deux variables. Dans notre cas nous avons choisi comme définition
 de la distance de variable l'écart orthogonal qui varie entre 0 et 1.
 
 Cette définition de la distance ce traduit par : - **Deux variables
 proches** sont deux variables qui évoluent de manière conjointe
 positivement ou négativement et qui ont une distance proche de 0. -
-**Deux variables eloignées** sont deux variables orthogonales qui
+**Deux variables éloignées** sont deux variables orthogonales qui
 évoluent de manière disjointe ou indépendante. Elles ont une distance
 proche de 1.
 
@@ -375,13 +379,13 @@ Le test perfomé sert à voir si la modalité est sur ou sous-représenté
 parmi les individus de la classe.
 
 **Le groupe 3** préfère consommer des saumons salés. Ils consomment le
-saumon pour ses apsects bénéfique pour la santé (oméga 3). C'est un
-goupe ou les pesonnes qui consomment le saumon sont principelement des
+saumon pour ses aspects bénéfique pour la santé (oméga 3). C'est un
+groupe ou les personnes qui consomment le saumon sont principalement des
 adultes. Ils apprécient le goût caractéristique du saumon et le consomme
 plutôt seul (sans pain beurre ou citron).
 
 On veut maintenant s'assurer que cette caractérisation des classes n'est
-pas décorellée de la réalité physique des produits. On va donc projeter
+pas décorrélée de la réalité physique des produits. On va donc projeter
 les variables physico-chimiques (bloc noir) sur le nuage des individus.
 Moralement, pour la variable "concentration en sel", la ligne devient
 donc un individu aimant beaucoup les saumons salés, plutôt qu'une
@@ -442,8 +446,8 @@ apprécié les saumons salés.
 
 On remarque que l'individu supplémentaire "salt" est assigné au groupe
 3, caractérisé par une appétence pour les saumons salés. Cela nous
-rassure quand à la consistance de nos données. Nos données nous sembles
-donc relativement fiables puisque les préférences des consomamteurs sont
+rassure quand à la consistance de nos données. Nos données nous semblent
+donc relativement fiables puisque les préférences des consommateurs sont
 cohérentes avec la réalité physique de nos produits.
 
 # Cours 3 - modèle de mélange
@@ -463,7 +467,7 @@ suivante : $$
 f(x; \mu, \sigma) = f(x) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2\right)
 $$
 
-## Exemple de loi bi dimensionelles :
+## Exemple de loi bidimensionnelles :
 
 ```{r,include=TRUE}
 #| echo: false
@@ -649,7 +653,7 @@ négatifs. Cela signifie qu'une augmentation de la valeur de $X$ est
 associée à une diminution de la valeur de $Y$. La corrélation entre les
 variables est négative.
 
-## Comment généer un loi de mélange gaussienne
+## Comment générer un loi de mélange gaussienne
 
 La génération d'une loi de mélange gaussienne se passe en 2 étapes :
 
@@ -711,7 +715,7 @@ $$
 Nous allons générer une **loi de mélange** de 2 gaussiennes
 unidimensionelles. Avec l'algorithme EM codé à la main, on essaye de
 retrouver les paramètres d'une loi de mélange générée par un autre
-groupe. On gnénère notre vecteur avec le code suivant :
+groupe. On génère notre vecteur avec le code suivant :
 
 ```{r,include=FALSE}
 rm(list = ls())
@@ -752,15 +756,15 @@ Une fois avoir importé les données de l'autre groupe, on réalise un
 graphique de la densité pour avoir une idée de la distribution de leur
 jeu de données.
 
-## Algorithme Expection Maximisation (EM)
+## Algorithme Expectation Maximisation (EM)
 
-On commence par l'étape **d'exepection** (E) de l'algorithme EM. Cette
+On commence par l'étape **d'expectation** (E) de l'algorithme EM. Cette
 étape peut aussi être appelé étiquetage car c'est ici que l'on calcul la
 probabiltié de nos points à appartenir à tel ou tel loi.
 
 On estime les valeurs de départ de manière graphique. Après avoir tracer
 la densité du jeu de données qui nous a été confié, on remarque deux
-pics, qui vont correspondre a nos moyennes, on estime égallement un
+pics, qui vont correspondre a nos moyennes, on estime également un
 écart type en se basant sur la largeur du pic. Pour la probabilité
 d'appartenir à telle ou telle loi on commence par estimer 50/50.
 
@@ -829,8 +833,8 @@ print(Pc2_x3)
 ## Réalisation de l'algorithme
 
 Pour tout algorithme il faut définir un **critère de convergence**. Dans
-notre cas nous avons choisi la **log vraissemblance**. Notre algorithme
-s'arrête lorsque la log vraissemblence de l'étape précédente et celle de
+notre cas nous avons choisi la **log vraisemblance **. Notre algorithme
+s'arrête lorsque la log vraisemblance  de l'étape précédente et celle de
 l'étape actuelle sont proche. Il faut définir un seuil pour définir ce
 que veux dire proche.
 
@@ -888,7 +892,7 @@ para <- M(proba)
 print(para)
 ```
 
-On créer enfin la fonction du calcul de la log-vraissemblance.
+On créer enfin la fonction du calcul de la log-vraisemblance .
 
 ```{r}
 
@@ -989,7 +993,7 @@ dt_clust$clust <- cl$cluster
 Pour estimer la pente de nos courbes, on utilise des **régressions
 linéaires**. On calcule la pente entre chaque point d'inflexion, il y a
 donc 3 coefficients directeurs par courbe. L'utilisation des
-coefficiants dirrecteurs pour la classification correspond à une
+coefficients directeurs  pour la classification correspond à une
 **extraction de features**.
 
 ```{r}
@@ -1038,7 +1042,7 @@ ggplot(df_visu) +
 ```
 
 Ce graphique permet de montrer que notre estimation des courbes par
-leurs features n'est pas déconant.
+leurs features n'est pas déconnant.
 
 On fait un clustering avec la méthode des kmeans comme évoqué
 précedement.
@@ -1051,7 +1055,7 @@ dt_clust2$cluster <- cl$cluster
 
 ```
 
-On représente grapgiquement les coeficients directeurs sur les trois
+On représente graphiquement les coefficients  directeurs sur les trois
 zones en fonction des clusters.
 
 ```{r}
@@ -1103,8 +1107,8 @@ par l’algorithme.
 
 Le **Topic modeling** est une méthode de NLP (natural language
 processing). C'est une exploration non supervisé d'un ensemble de textes
-(appelés **documents** par la suite), afin de produir un ensemble de
-sommaire de **termes** (mots) représentant l'ensmble des **thèmes
+(appelés **documents** par la suite), afin de produire un ensemble de
+sommaire de **termes** (mots) représentant l'ensemble  des **thèmes
 principaux** (Topics) abordés dans le corpus de document.
 
 Nous nous sommes basés sur l'article "Latent Dirichlet Allocation" de
@@ -1140,14 +1144,14 @@ Doc \<--\> Topics \<--\> Mots
 
 Le processus de génération est **hiérarchique**.
 
-La première étape consiste à créer les topics en leur attribuants des
+La première étape consiste à créer les topics en leur attribuant  des
 mots.
 
 Ensuite on se place à l'échelle du document, pour le premier mots du
 document, on choisi un Topic dans la distrubution de Topics du
-documents. Une fois le Topics selectionné on dire un mot dans la
+documents. Une fois le Topics selectionné on tire un mot dans la
 distribution de mot, c'est ce mot tiré qui sera notre premier mot. Ce
-procesus est répété pour chaque mot du document.
+processus  est répété pour chaque mot du document.
 
 Dans LDA il y a **Dirichlet**, mais qu'est ce qu'une loi de Dirichlet ?
 Pour mieux comprendre on peut se placer dans le cas de K=2, c'est à dire
@@ -1164,9 +1168,9 @@ distribution. La loi de Dirichlet est donc la généralisation de la loi
 Beta pour une problème a plus de deux classes.
 
 La dernière question que l'on se pose c'est comment la machine fait pour
-faire le Topic modeling. Pour celà nous alons faire un exemple simple
+faire le Topic modeling. Pour celà nous allons faire un exemple simple
 
-**Doc1** : Une *banque* me *pête* de l'*argent* pour une *dette* 
+**Doc1** : Une *banque* me *prête * de l'*argent* pour une *dette* 
 
 **Doc2** : La *banque* *investit* dans la *dette* de l'*état* 
 
@@ -1196,7 +1200,7 @@ L'algorithme EM ne marche pas car on ne peut pas maximiser ou minimiser,
 dans ce mode opératoire on veut que ça converge, c'est à dire que les
 mots ne changent plus de Topics (ou seulement à la marge).
 
-Pour affiner les Topics, on va sortir un mot d'un topic, et le réafecter
+Pour affiner les Topics, on va sortir un mot d'un topic, et le réaffecter 
 en fonction de **critère d'affinité**.
 
 Il nous en faut deux un pour le Topic et un pour le document. On veut
@@ -1208,4 +1212,4 @@ pour K1 2 pour K2
 
 Le mot a donc 7 chances sur 9 d'être dans le Topic 1, mais vu que ce
 n'est pas un processus déterministe il a quand même 2 chance sur 9
-d'étre dans le Topic 2.
+d'être  dans le Topic 2.
